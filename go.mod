@@ -1,4 +1,4 @@
-module xk6-working-memory
+module github.com/gera-cl/xk6-working-memory
 
 go 1.21.0
 
