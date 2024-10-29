@@ -4,13 +4,17 @@
 
 ## Installation
 
-To use the `working-memory` extension, you need to build k6 with this extension.
+Install [xk6](https://github.com/grafana/xk6)
+
+```bash
+go install go.k6.io/xk6/cmd/xk6@latest
+```
+
+Then, to use the `working-memory` extension, you need to build k6 with this extension.
 
 ```bash
 xk6 build --with github.com/gera-cl/xk6-working-memory@latest
 ```
-
-> Note: Replace `github.com/gera-cl/xk6-working-memory` with the actual repository URL for this package.
 
 ## Usage
 
