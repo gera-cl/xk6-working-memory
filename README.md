@@ -2,6 +2,8 @@
 
 `working-memory` is an in-memory caching extension for [k6](https://k6.io/), a modern load testing tool. This extension allows k6 scripts to store, retrieve, and manage temporary data across virtual users (VUs), enabling scenarios where data persistence and caching are required.
 
+The extension is built on top of [patrickmn/go-cache](https://github.com/patrickmn/go-cache), a robust caching library for Go that supports automatic item expiration and cleanup.
+
 ## Installation
 
 Install [xk6](https://github.com/grafana/xk6)
@@ -30,9 +32,10 @@ import memory from 'k6/x/working-memory';
 
 The `working-memory` extension exposes the following methods:
 
-- `init(defaultExpiration, cleanupInterval)`: Initializes the cache with a default expiration time and cleanup interval in seconds.
-- `set(id, value, expiration)`: Stores a value in the cache with an optional expiration time in seconds.
-- `get(id)`: Retrieves a value from the cache by its identifier.
+- `init(defaultExpiration, cleanupInterval)`: Initializes the cache with a specified expiration time in seconds (`defaultExpiration`). The `cleanupInterval` parameter defines the interval, in seconds, at which expired items are removed from the cache automatically.
+- `set(id, value, expiration)`: Stores a string `value` in the cache under the specified `id` with an optional expiration time in seconds. Defaults to the cache's default expiration if omitted.
+- `get(id)`: Retrieves a string value from the cache by its identifier. Returns `null` if the identifier is not found or has expired.
+- `flush()`: Deletes all items currently stored in the cache, effectively clearing it.
 
 ### Example Script
 

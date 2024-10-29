@@ -64,9 +64,10 @@ func (*rootModule) NewModuleInstance(_ modules.VU) modules.Instance {
 		exports: modules.Exports{
 			Default: globalCacheInstance,
 			Named: map[string]interface{}{
-				"init": globalCacheInstance.Init,
-				"set":  globalCacheInstance.Set,
-				"get":  globalCacheInstance.Get,
+				"init":  globalCacheInstance.Init,
+				"set":   globalCacheInstance.Set,
+				"get":   globalCacheInstance.Get,
+				"flush": globalCacheInstance.Flush,
 			},
 		},
 	}
@@ -92,6 +93,9 @@ func (mod *module) Exports() modules.Exports {
 // - A boolean indicating if the value was successfully set.
 // - An error if the cache is not initialized or another issue occurs.
 func (c *Cache) Set(id, value string, expiration ...int) (bool, error) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	if c.cache == nil {
 		return false, errors.New("cache not initialized: please call init() first")
 	}
@@ -113,6 +117,9 @@ func (c *Cache) Set(id, value string, expiration ...int) (bool, error) {
 // - The cached value if found, or nil if the entry does not exist.
 // - An error if the cache is not initialized or another issue occurs.
 func (c *Cache) Get(id string) (interface{}, error) {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
 	if c.cache == nil {
 		return nil, errors.New("cache not initialized: please call init() first")
 	}
@@ -121,4 +128,16 @@ func (c *Cache) Get(id string) (interface{}, error) {
 		return value.(string), nil
 	}
 	return nil, nil
+}
+
+// Flush clears all items from the cache, effectively resetting it.
+func (c *Cache) Flush() error {
+	c.mutex.Lock()
+	defer c.mutex.Unlock()
+
+	if c.cache == nil {
+		return errors.New("cache not initialized: please call init() first")
+	}
+	c.cache.Flush()
+	return nil
 }
